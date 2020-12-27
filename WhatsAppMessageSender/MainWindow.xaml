@@ -1,13 +1,13 @@
-﻿<Mah:MetroWindow x:Class="WhatsAppMessageSender.MainWindow"
+﻿<Mah:MetroWindow x:Class="WhatsAppMessage.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WhatsAppMessageSender"
+        xmlns:local="clr-namespace:WhatsAppMessage"
         xmlns:Mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
         TitleCharacterCasing="Normal"
-        Title="WhatsAppMessageSender ver0.1" Height="452" Width="530"
+        Title="WhatsAppMessageSender ver0.1" Height="460" Width="530"
         GlowBrush="Blue"
         BorderThickness="0"
         ResizeMode="NoResize">
@@ -15,7 +15,7 @@
     <Window.Resources>
         <ResourceDictionary Source="/Style/StyleDic.xaml"/>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.Resources>
             <FrameworkElement x:Key="proxyElement" />
@@ -25,7 +25,7 @@
         <Mah:ProgressRing x:Name="loading_image" Style="{StaticResource pgr-normal}"/>
         <Button x:Name="read_button" Content="Read CSV" HorizontalAlignment="Left" Margin="18,8,0,0" VerticalAlignment="Top" Width="76" Height="30" Click="read_button_Click" Style="{DynamicResource MahApps.Styles.Button.Square.Accent}" Mah:ControlsHelper.ContentCharacterCasing="Normal"/>
 
-        <DataGrid Name="dataGrid" HorizontalAlignment="Center" Margin="10,43,0,203" Width="497" ItemsSource="{Binding Path=PhoneNumbers}" 
+        <DataGrid Name="dataGrid" HorizontalAlignment="Center" Margin="18,38,10,208" Width="496" ItemsSource="{Binding Path=PhoneNumbers}" 
                   AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" CanUserResizeColumns="False"
                   ColumnHeaderStyle="{StaticResource  casing-normal}">
             <DataGrid.Columns>
@@ -43,8 +43,20 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding IndexNumber}" ClipboardContentBinding="{x:Null}"
+                                    Header="NO" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding CustomerName}" ClipboardContentBinding="{x:Null}"
+                                    Header="NAME" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding PhoneNumber}" ClipboardContentBinding="{x:Null}"
-                                    Header="Phone No" IsReadOnly="True" Width="*"/>
+                                    Header="TELEPHONE" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Email}" ClipboardContentBinding="{x:Null}"
+                                    Header="EMAIL" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Penerima}" ClipboardContentBinding="{x:Null}"
+                                    Header="PENERIMA" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Keteramgam}" ClipboardContentBinding="{x:Null}"
+                                    Header="KETERANGAN" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Judge}" ClipboardContentBinding="{x:Null}"
+                                    Header="" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
 
@@ -52,7 +64,7 @@
                  Mah:TextBoxHelper.Watermark="Write here the message"
                  VerticalScrollBarVisibility="Auto"
                  VerticalContentAlignment="Top" Margin="19,220,8.667,48" />
-        <Button x:Name="send_button" Content="SEND MESSAGE" HorizontalAlignment="Left" Margin="66,381,0,0" VerticalAlignment="Top"
+        <Button x:Name="send_button" Content="SEND MESSAGE" HorizontalAlignment="Left" Margin="66,391,0,0" VerticalAlignment="Top"
                 Width="400" Height="30" Click="send_button_Click" Style="{DynamicResource MahApps.Styles.Button.Square.Accent}" Mah:ControlsHelper.ContentCharacterCasing="Normal"/>
     </Grid>
 </Mah:MetroWindow>

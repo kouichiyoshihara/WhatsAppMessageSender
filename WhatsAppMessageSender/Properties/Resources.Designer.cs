@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WhatsAppMessageSender.Properties {
+namespace WhatsAppMessage.Properties {
     using System;
     
     

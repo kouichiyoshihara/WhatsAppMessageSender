@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace WhatsAppMessageSender.Data
+namespace WhatsAppMessage.Data
 {
     /// <summary>Phone number class</summary>
     public class WhatsAppViewModel : INotifyPropertyChanged
@@ -15,9 +15,26 @@ namespace WhatsAppMessageSender.Data
 
         public class PhoneNumViewModel : INotifyPropertyChanged
         {
-            /// <summary>Phone number</summary>
+            /// <summary>Number</summary>
+            public string IndexNumber { get; set; }
+
+            /// <summary>Name</summary>
+            public string CustomerName { get; set; }
+
+            /// <summary>Telephone</summary>
             public string PhoneNumber { get; set; }
 
+            /// <summary>Email</summary>
+            public string Email { get; set; }
+
+            /// <summary>Reciever</summary>
+            public string Penerima { get; set; }
+
+            /// <summary>Information</summary>
+            public string Keteramgam { get; set; }
+
+            /// <summary>Judgement</summary>
+            public string Judge { get; set; }
             /// <summary>Is selected</summary>
             public bool IsChecked
             {
@@ -43,9 +60,18 @@ namespace WhatsAppMessageSender.Data
 
             private bool isChecked = false;
 
-            public PhoneNumViewModel(string phoneNumber, StatusChangeHandler handler)
+            public PhoneNumViewModel(string indexNumber,
+                string customerName, string phoneNumber, 
+                string eMail, string penerima,
+                string keteramgam, string judge, StatusChangeHandler handler)
             {
+                IndexNumber = indexNumber;
+                CustomerName = customerName;
                 PhoneNumber = phoneNumber;
+                Email = eMail;
+                Penerima = penerima;
+                Keteramgam = keteramgam;
+                Judge = judge;
                 isChecked = false;
                 OnStatusChange = handler;
             }
@@ -108,10 +134,12 @@ namespace WhatsAppMessageSender.Data
         {
             PhoneNumbers = new ObservableCollection<PhoneNumViewModel>();
 
-            List<string> phoneNumList = this.readCsvFile(csvFilePath);
-            foreach (string phoneNum in phoneNumList)
+            List<List<string>> customerList = this.readCsvFile(csvFilePath);
+            foreach (List<string> record in customerList)
             {
-                PhoneNumbers.Add(new PhoneNumViewModel(phoneNum, new PhoneNumViewModel.StatusChangeHandler(this.OnStatusChange)));
+                PhoneNumbers.Add(new PhoneNumViewModel(
+                    record[0], record[1], record[2], record[3],
+                    record[4], record[5], "", new PhoneNumViewModel.StatusChangeHandler(this.OnStatusChange)));
             }
             EnableSelecAll = true;
         }
@@ -119,9 +147,9 @@ namespace WhatsAppMessageSender.Data
         /// <summary>CSV file read</summary>
         /// <param name="filePath">CSV file path</param>
         /// <returns>phone number list</returns>
-        private List<string> readCsvFile(string csvFilePath)
+        private List<List<string>> readCsvFile(string csvFilePath)
         {
-            List<string> phoneNumList = new List<string>();
+            List<List<string>> customerList = new List<List<string>>();
             try
             {
                 // determine the file exists in the argument path
@@ -140,10 +168,16 @@ namespace WhatsAppMessageSender.Data
 
                         // Get an array of strings separated by commas
                         var cells = parser.ReadFields();
+                        List<string> record = new List<string>();
 
                         for (int i = 0; i < cells.Length; i++)
                         {
-                            phoneNumList.Add(cells[i]);
+                            record.Add(cells[i]);
+                        }
+                        // 電話番号が入っているデータのみインポート対象にする
+                        if (!cells[2].Equals(""))
+                        {
+                            customerList.Add(record);
                         }
                     }
                 }
@@ -153,7 +187,19 @@ namespace WhatsAppMessageSender.Data
                 // output error detail 
                 Debug.WriteLine(ex.Message);
             }
-            return phoneNumList;
+
+            // ヘッダー行を削除する
+            try
+            {
+                customerList.RemoveAt(0);
+            }
+            catch (Exception ex)
+            {
+                // output error detail 
+                Debug.WriteLine(ex.Message);
+            }
+
+            return customerList;
         }
 
 

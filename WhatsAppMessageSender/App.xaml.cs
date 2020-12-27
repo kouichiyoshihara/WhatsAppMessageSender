@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace WhatsAppMessageSender
+namespace WhatsAppMessage
 {
     /// <summary>
     /// App.xaml の相互作用ロジック

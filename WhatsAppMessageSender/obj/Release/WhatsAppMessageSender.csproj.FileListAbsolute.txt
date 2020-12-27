@@ -1,0 +1,14 @@
+C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\obj\Release\WhatsAppMessageSender.csprojAssemblyReference.cache
+C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\obj\Release\MainWindow.g.cs
+C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\obj\Release\App.g.cs
+C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\obj\Release\WhatsAppMessageSender_MarkupCompile.cache
+C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\obj\Release\WhatsAppMessageSender_MarkupCompile.lref
+C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\obj\Release\App.baml
+C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\obj\Release\MainWindow.baml
+C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\obj\Release\style\StyleDic.baml
+C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\obj\Release\WhatsAppMessageSender.g.resources
+C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\obj\Release\WhatsAppMessageSender.Properties.Resources.resources
+C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\obj\Release\WhatsAppMessageSender.csproj.GenerateResource.cache
+C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\obj\Release\WhatsAppMessageSender.csproj.CoreCompileInputs.cache
+C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\obj\Release\WhatsAppMessageSender.exe
+C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\obj\Release\WhatsAppMessageSender.pdb
