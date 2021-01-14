@@ -16,6 +16,9 @@ using System.Threading;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Windows.UI;
+using System.Windows.Media;
+using System.Windows.Controls.Primitives;
 
 namespace WhatsAppMessage
 {
@@ -42,7 +45,7 @@ namespace WhatsAppMessage
             {
                 return;
             }
-            this.dataGrid.DataContext = new WhatsAppViewModel(ofd.FileName);  
+            this.dataGrid.DataContext = new WhatsAppViewModel(ofd.FileName);
         }
 
         /// <summary> send message button </summary>
@@ -83,6 +86,13 @@ namespace WhatsAppMessage
             }
             */
 
+            // チェックボックスが押下されていることを確認
+            if (!((bool)this.chk1.IsChecked && (bool)this.chk2.IsChecked))
+            {
+                MessageBox.Show("Please check confirmation before sending");
+                return;
+            }
+
             // 送信するかどうかの最終確認
             MessageBoxResult result = MessageBox.Show("Are you sure to send ?",
                 "Confirmation",
@@ -94,11 +104,16 @@ namespace WhatsAppMessage
             {
                 // メッセージボックスの中身を取得
                 string message = this.WhatsAppMessage.Text;
-                message = message.Replace("\r\n", "%0d%0a");
+                message = message.Replace("\r\n", "%0d%0a");    // 改行変換
+                message = message.Replace(" ", "%20");          // 半角スペース変換
+                message = message.Replace("　", "%E3%80%80");   // 全角スペース変換
 
                 // チェックがついている宛先を宛先リストとして保存
                 List<string> sendList = new List<string>();
                 ObservableCollection<PhoneNumViewModel> customerList = (ObservableCollection<PhoneNumViewModel>)this.dataGrid.ItemsSource;
+
+                // WhatsAppプロセスを起動
+                var processWA = new Process();
 
                 int index = 0;
                 // 一斉送信開始
@@ -111,14 +126,13 @@ namespace WhatsAppMessage
 
                         // Webブラウザ起動
                         var processWB = Process.Start(@"chrome.exe", url);
-                        //Thread.Sleep(4000);
-                        processWB.WaitForExit(8000);
+                        Thread.Sleep(4000);
+                        //processWB.WaitForExit(8000);
                         processWB.CloseMainWindow(); // Webブラウザを閉じる
 
                         // WhatsAppアプリに移行できたかどうか
                         bool findFlg = false;
-                        // WhatsAppプロセスを起動
-                        var processWA = new Process();
+                        
                         try
                         {
                             Thread.Sleep(4000);
@@ -172,6 +186,7 @@ namespace WhatsAppMessage
                                         customerList[index].Judge = "NG";
                                         this.dataGrid.ItemsSource = customerList;
                                         this.dataGrid.Items.Refresh();
+                                        processWA.CloseMainWindow();
                                     }
                                 }
                                 catch
@@ -199,19 +214,20 @@ namespace WhatsAppMessage
                         {
                             Thread.Sleep(1000);
                             System.Windows.Forms.SendKeys.SendWait("{ENTER}");
-                            try
-                            {
-                                processWA.CloseMainWindow();
-                            }
-                            catch
-                            {
-                                // 処理継続
-                            }
+                            
                         }
                     }
                     index++;
                 }
-
+                try
+                {
+                    processWA.CloseMainWindow();
+                }
+                catch
+                {
+                    // 処理継続
+                }
+                            
                 // 処理終了メッセージ表示
                 MessageBox.Show("Complete");
             }
@@ -325,6 +341,6 @@ namespace WhatsAppMessage
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
 
-       
+        
     }
 }

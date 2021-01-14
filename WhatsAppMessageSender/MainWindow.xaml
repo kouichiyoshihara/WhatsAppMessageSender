@@ -7,7 +7,7 @@
         xmlns:Mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
         TitleCharacterCasing="Normal"
-        Title="WhatsAppMessageSender ver0.1" Height="460" Width="530"
+        Title="WhatsAppMessageSender ver0.2" Height="560" Width="560"
         GlowBrush="Blue"
         BorderThickness="0"
         ResizeMode="NoResize">
@@ -20,14 +20,22 @@
         <Grid.Resources>
             <FrameworkElement x:Key="proxyElement" />
         </Grid.Resources>
-        <ContentControl Visibility="Collapsed" Content="{StaticResource proxyElement}" />
-        <Rectangle x:Name="rec_overlay" Width="530" Height="330" Style="{StaticResource rec-overlay}" />
-        <Mah:ProgressRing x:Name="loading_image" Style="{StaticResource pgr-normal}"/>
-        <Button x:Name="read_button" Content="Read CSV" HorizontalAlignment="Left" Margin="18,8,0,0" VerticalAlignment="Top" Width="76" Height="30" Click="read_button_Click" Style="{DynamicResource MahApps.Styles.Button.Square.Accent}" Mah:ControlsHelper.ContentCharacterCasing="Normal"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="371*"/>
+            <ColumnDefinition Width="153*"/>
+        </Grid.ColumnDefinitions>
+        <ContentControl Visibility="Collapsed" Content="{StaticResource proxyElement}" Grid.ColumnSpan="2" />
+        <Rectangle x:Name="rec_overlay" Width="530" Height="330" Style="{StaticResource rec-overlay}" Grid.ColumnSpan="2" Margin="0,36,-6,65" />
+        <Mah:ProgressRing x:Name="loading_image" Style="{StaticResource pgr-normal}" Margin="212,166,59,165"/>
 
-        <DataGrid Name="dataGrid" HorizontalAlignment="Center" Margin="18,38,10,208" Width="496" ItemsSource="{Binding Path=PhoneNumbers}" 
+        <CheckBox Name="chk1" IsChecked="False" Content="I confirmed to close all Chrome browser" HorizontalAlignment="Left" Height="28" Margin="18,3,0,0" VerticalAlignment="Top" Width="294"/>
+        <CheckBox Name="chk2" IsChecked="False" Content="I confirmed that the WhatsApp launches normally before sending" HorizontalAlignment="Left" Height="28" Margin="18,25,0,0" VerticalAlignment="Top" Width="383" Grid.ColumnSpan="2"/>
+
+        <Button x:Name="read_button" Content="Import CSV" HorizontalAlignment="Left" Margin="35,10,0,0" VerticalAlignment="Top" Width="117" Height="43" Click="read_button_Click" Style="{DynamicResource MahApps.Styles.Button.Square.Accent}" Mah:ControlsHelper.ContentCharacterCasing="Normal" Grid.Column="1"/>
+
+        <DataGrid Name="dataGrid" HorizontalAlignment="Center" Margin="19,58,10,245" Width="525" ItemsSource="{Binding Path=PhoneNumbers}" 
                   AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" CanUserResizeColumns="False"
-                  ColumnHeaderStyle="{StaticResource  casing-normal}">
+                  ColumnHeaderStyle="{StaticResource  casing-normal}" Grid.ColumnSpan="2">
             <DataGrid.Columns>
                 <DataGridTemplateColumn IsReadOnly="True" Width="43">
                     <DataGridTemplateColumn.Header>
@@ -43,6 +51,18 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding Judge}" ClipboardContentBinding="{x:Null}"
+                                    Header="" IsReadOnly="True">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Judge}" Value="NG">
+                                    <Setter Property="Background" Value="Red"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding IndexNumber}" ClipboardContentBinding="{x:Null}"
                                     Header="NO" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding CustomerName}" ClipboardContentBinding="{x:Null}"
@@ -55,16 +75,15 @@
                                     Header="PENERIMA" IsReadOnly="True"/>
                 <DataGridTextColumn Binding="{Binding Keteramgam}" ClipboardContentBinding="{x:Null}"
                                     Header="KETERANGAN" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{Binding Judge}" ClipboardContentBinding="{x:Null}"
-                                    Header="" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
 
         <TextBox x:Name="WhatsAppMessage" AcceptsReturn="True" TextWrapping="Wrap"
                  Mah:TextBoxHelper.Watermark="Write here the message"
                  VerticalScrollBarVisibility="Auto"
-                 VerticalContentAlignment="Top" Margin="19,220,8.667,48" />
-        <Button x:Name="send_button" Content="SEND MESSAGE" HorizontalAlignment="Left" Margin="66,391,0,0" VerticalAlignment="Top"
-                Width="400" Height="30" Click="send_button_Click" Style="{DynamicResource MahApps.Styles.Button.Square.Accent}" Mah:ControlsHelper.ContentCharacterCasing="Normal"/>
+                 VerticalContentAlignment="Top" Margin="19,291,8,48" Grid.ColumnSpan="2" />
+        <Button x:Name="send_button" Content="SEND MESSAGE" HorizontalAlignment="Left" Margin="66,492,0,0" VerticalAlignment="Top"
+                Width="400" Height="30" Click="send_button_Click" Style="{DynamicResource MahApps.Styles.Button.Square.Accent}" Mah:ControlsHelper.ContentCharacterCasing="Normal" Grid.ColumnSpan="2"/>
+
     </Grid>
 </Mah:MetroWindow>
