@@ -25,6 +25,7 @@ using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using System.Management;
 using System.Drawing.Imaging;
 using OpenCvSharp;
+using System.IO;
 
 namespace WhatsAppMessage
 {
@@ -57,89 +58,9 @@ namespace WhatsAppMessage
         /// <summary> send message button </summary>
         private void send_button_Click(object sender, RoutedEventArgs e)
         {
-            //using (Mat mat = new Mat(@"C:\Users\ko198\source\repos\WhatsAppMessageSender\WhatsAppMessageSender\bin\Debug\wkConfig\shot_raw.png"))
-                // WhatsAppデスクトップアプリ（プロセス名：WhatsApp）をアクティブに
-                /*
-                Process[] processt = Process.GetProcessesByName("WhatsApp");
-                var processWA_t = new Process();
-                foreach (var p in processt)
-                {
-                   if (p.MainWindowTitle.Equals("WhatsApp"))
-                    {
-                        processWA_t = p;
-                        break;
-                    }
-                }
 
-                List<Process> tent = new List<Process>();
-                var sss = GetChildProcesses(processWA_t);
-                foreach (var aa in sss) 
-                {
-                    tent.Add(aa);
-                    var a1 = GetChildProcesses(aa);
-                    foreach (var b in a1)
-                    {
-                        tent.Add(b);
-                        var b1 = GetChildProcesses(b);
-                        foreach (var b2 in b1)
-                        {
-                            tent.Add(b2);
-                        }
-                    }
-                }
-                var a = 1;
-                */
-                /*
-                Process[] process = Process.GetProcessesByName("WhatsApp");
-                if (process.Length > 0)
-                {
-                    foreach (var p in process)
-                    {
-                        if (p.MainWindowTitle.Equals("WhatsApp"))
-                        {
-                            Interaction.AppActivate(p.Id);
-                            break;
-                        }
-                    }
-                }
-                SendKeys.SendWait("{ENTER}");
-                */
-                //テスト用の電卓計算
-                //startCalc();
-
-                /*
-                MessageBoxResult result = MessageBox.Show("Are you sure to send ?",
-                    "Confirmation",
-                    MessageBoxButton.OKCancel,
-                    MessageBoxImage.Warning);
-
-
-                if (result == MessageBoxResult.OK)
-                {
-                    List<string> sendList = new List<string>();
-                    // OK case
-                    ObservableCollection<PhoneNumViewModel> phoneNumList = (ObservableCollection<PhoneNumViewModel>)this.dataGrid.ItemsSource;
-                    foreach (PhoneNumViewModel phoneNum in phoneNumList)
-                    {
-                        if (phoneNum.IsChecked)
-                        {
-                            sendList.Add(phoneNum.PhoneNumber);
-                        }
-                    }
-                    var message = this.WhatsAppMessage.Text;
-                    WhatsAppMessageSender wams = new WhatsAppMessageSender();
-                    var process = Process.Start("C:\\Users\\ko198\\AppData\\Local\\WhatsApp\\WhatsApp.exe");
-
-                    foreach (string sendTo in sendList)
-                    {
-                        wams.sendMessage(sendTo, message);
-                    }
-                    MessageBox.Show("Complete");
-                }
-                */
-
-                // チェックボックスが押下されていることを確認
-                if (!((bool)this.chk1.IsChecked && (bool)this.chk2.IsChecked))
+            // チェックボックスが押下されていることを確認
+            if (!((bool)this.chk1.IsChecked && (bool)this.chk2.IsChecked))
             {
                 MessageBox.Show("Please check confirmation before sending");
                 return;
@@ -150,6 +71,31 @@ namespace WhatsAppMessage
                 "Confirmation",
                 MessageBoxButton.OKCancel,
                 MessageBoxImage.Warning);
+
+            // 設定ファイルを読み込みタイムアウト時間、ウェイト時間、クローズ時間を取得する
+            string confFilePath = System.IO.Directory.GetCurrentDirectory();
+            confFilePath += "\\config\\conf.csv";
+            var timeConf = new Dictionary<string, int>();
+            StreamReader sr = new StreamReader(@confFilePath);
+            {
+                // 末尾まで繰り返す
+                while (!sr.EndOfStream)
+                {
+                    // CSVファイルの一行を読み込む
+                    string line = sr.ReadLine();
+                    // 読み込んだ一行をカンマ毎に分けて配列に格納する
+                    string[] values = line.Split(',');
+
+                    // 設定ファイルを格納する
+                    if (values.Length >1)
+                    {
+                        timeConf.Add(values[0], int.Parse(values[1]));
+                    }
+                }
+            }
+            int BROWSER_TIMEOUT_MSEC = timeConf["BROWSER_TIMEOUT_MSEC"];                    // タイムアウト時間
+            int WHATSAPP_START_WAITTIME_MSEC = timeConf["WHATSAPP_START_WAITTIME_MSEC"];    // ウェイト時間
+            int WHATSAPP_CLOSE_WAITTIME_MSEC = timeConf["WHATSAPP_CLOSE_WAITTIME_MSEC"];    // クローズ時間
 
             // 送信するとなった場合
             if (result == MessageBoxResult.OK)
@@ -191,15 +137,10 @@ namespace WhatsAppMessage
                 message = message.Replace("?", "%3F");          // ?変換
                 message = message.Replace("/", "%2F");          // /変換
 
-
-
-
-
                 // チェックがついている宛先を宛先リストとして保存
                 List<string> sendList = new List<string>();
                 ObservableCollection<PhoneNumViewModel> customerList = (ObservableCollection<PhoneNumViewModel>)this.dataGrid.ItemsSource;
 
-                
                 // インデックス
                 int index = 0;
                 
@@ -222,12 +163,14 @@ namespace WhatsAppMessage
                         // Webブラウザ起動
                         var processWB = Process.Start(@"chrome.exe", url);
                         //Thread.Sleep(4000);
-                        processWB.WaitForExit(10000);
-                        processWB.CloseMainWindow(); // Webブラウザを閉じる
+                        //processWB.WaitForExit(10000);       // タイムアウト時間
+                        processWB.WaitForExit(BROWSER_TIMEOUT_MSEC);    // タイムアウト時間
+                        processWB.CloseMainWindow();                    // Webブラウザを閉じる
                         
                         try
                         {
-                            Thread.Sleep(4000);
+                            //Thread.Sleep(4000);             // ウェイト時間
+                            Thread.Sleep(WHATSAPP_START_WAITTIME_MSEC); // ウェイト時間
 
                             // WhatsAppデスクトップアプリ（プロセス名：WhatsApp）をアクティブに
                             Process[] process = Process.GetProcessesByName("WhatsApp");
@@ -278,17 +221,15 @@ namespace WhatsAppMessage
                                 this.dataGrid.ItemsSource = customerList;
                             }
                             this.dataGrid.Items.Refresh();
-                            //Thread.Sleep(1000);
-                            //System.Windows.Forms.SendKeys.SendWait("{ENTER}");
                             Interaction.AppActivate(processWA.Id);
                             SendKeys.SendWait("{ENTER}");
-                            Thread.Sleep(1000);
+                            // Thread.Sleep(1000);             // クローズ時間
+                            Thread.Sleep(WHATSAPP_CLOSE_WAITTIME_MSEC); // クローズ時間
                             processWA.CloseMainWindow();
 
                         }
                     }
                     index++;
-                    //processWA.CloseMainWindow();
                 }
 
                 // 処理終了メッセージ表示
